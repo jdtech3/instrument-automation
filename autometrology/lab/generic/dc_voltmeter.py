@@ -1,5 +1,7 @@
-from .instrument import Instrument
 from math import inf
+
+from .instrument import Instrument
+
 
 class DCVoltmeter(Instrument):
     # -- Properties

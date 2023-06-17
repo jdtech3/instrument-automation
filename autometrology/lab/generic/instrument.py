@@ -1,11 +1,13 @@
 from functools import wraps
 
 from autometrology.visa.pyvisa import VISA
+
 from ..errors import OutOfRangeError
 
-class Instrument():
+
+class Instrument:
     # -- Properties
-    model: str = 'Generic Instrument'
+    model: str = "Generic Instrument"
     visa: VISA = None
 
     # -- Constructor
@@ -19,11 +21,13 @@ class Instrument():
         def _check_range(f):
             @wraps(f)
             def wrapper(*args, **kwargs):
-                if (min <= args[1] <= max):
+                if min <= args[1] <= max:
                     return f(*args, **kwargs)
                 else:
-                    raise OutOfRangeError(f'Expecting between {min} and {max}, but got {args[1]}')
-                
+                    raise OutOfRangeError(
+                        f"Expecting between {min} and {max}, but got {args[1]}"
+                    )
+
             return wrapper
 
-        return _check_range     # as per https://stackoverflow.com/questions/5929107/decorators-with-parameters
+        return _check_range  # as per https://stackoverflow.com/questions/5929107/decorators-with-parameters
