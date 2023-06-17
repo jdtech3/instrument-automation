@@ -1,0 +1,9 @@
+# macOS bad
+.DS_Store
+
+# IDEs
+.idea/
+.vscode/
+
+# Python
+__pycache__/
