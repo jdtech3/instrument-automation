@@ -1,6 +1,6 @@
 from pyvisa.errors import VisaIOError
 
-from autometrology.lab.errors import InstrumentNotFoundError, InstrumentOpenError
+from autometrology.errors import InstrumentNotFoundError, InstrumentOpenError
 from autometrology.lab.generic.dc_power_supply import DCPowerSupply
 
 

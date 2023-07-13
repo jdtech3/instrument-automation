@@ -1,8 +1,7 @@
 from functools import wraps
 
+from autometrology.errors import OutOfRangeError
 from autometrology.visa.pyvisa import VISA
-
-from ..errors import OutOfRangeError
 
 
 class Instrument:

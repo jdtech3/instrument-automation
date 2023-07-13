@@ -1,14 +1,14 @@
 from pyvisa.errors import VisaIOError
 
-from autometrology.lab.errors import (
+from autometrology.errors import (
     ChannelError,
     InstrumentNotFoundError,
     InstrumentOpenError,
 )
 from autometrology.lab.generic.dc_power_supply import DCPowerSupply
 
-
 # ! TODO: INCOMPLETE!!
+
 
 class Keithley_2230_30_1(DCPowerSupply):
     # -- Constructor
