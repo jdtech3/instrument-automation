@@ -1,7 +1,10 @@
+import logging
+
 from pyvisa.errors import VisaIOError
 
-from autometrology.errors import InstrumentNotFoundError, InstrumentOpenError
+from autometrology.errors import InstrumentOpenError
 from autometrology.lab.generic.dc_power_supply import DCPowerSupply
+from autometrology.visa.utils import VISAUtils
 
 
 class Korad_KA3005P(DCPowerSupply):
@@ -11,18 +14,7 @@ class Korad_KA3005P(DCPowerSupply):
 
         # Scan
         if resource_id is None:
-            for _id in self.visa.list():
-                try:
-                    self.visa.open(_id)
-                    if "KORAD KA3005P" in self.visa.query("*IDN?"):
-                        resource_id = _id
-                except VisaIOError:
-                    pass
-
-            if resource_id is None:
-                raise InstrumentNotFoundError(
-                    "Scanning completed but no matching instrument found!"
-                )
+            resource_id = VISAUtils.scan(self.visa, "*IDN?", "KORAD KA3005P")
 
         # Open
         try:
@@ -30,7 +22,7 @@ class Korad_KA3005P(DCPowerSupply):
         except VisaIOError as e:
             raise InstrumentOpenError(str(e))
 
-        print(self.visa.query("*IDN?").replace("\n", ""), "loaded!")
+        logging.info(self.visa.query("*IDN?").replace("\n", " ") + "loaded!")
 
     # -- Methods
     def get_voltage(self) -> float:

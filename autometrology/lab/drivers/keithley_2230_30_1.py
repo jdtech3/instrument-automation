@@ -1,11 +1,10 @@
+import logging
+
 from pyvisa.errors import VisaIOError
 
-from autometrology.errors import (
-    ChannelError,
-    InstrumentNotFoundError,
-    InstrumentOpenError,
-)
+from autometrology.errors import ChannelError, InstrumentOpenError
 from autometrology.lab.generic.dc_power_supply import DCPowerSupply
+from autometrology.visa.utils import VISAUtils
 
 # ! TODO: INCOMPLETE!!
 
@@ -17,18 +16,7 @@ class Keithley_2230_30_1(DCPowerSupply):
 
         # Scan
         if resource_id is None:
-            for _id in self.visa.list():
-                try:
-                    self.visa.open(_id)
-                    if "2230-30-1" in self.visa.query("*IDN?"):
-                        resource_id = _id
-                except VisaIOError:
-                    pass
-
-            if resource_id is None:
-                raise InstrumentNotFoundError(
-                    "Scanning completed but no matching instrument found!"
-                )
+            resource_id = VISAUtils.scan(self.visa, "*IDN?", "2230-30-1")
 
         # Open
         try:
@@ -40,7 +28,7 @@ class Keithley_2230_30_1(DCPowerSupply):
         self.visa.resource.read_termination = "\n"
         self.visa.resource.write_termination = "\n"
 
-        print(self.visa.query("*IDN?").replace("\n", ""), "loaded!")
+        logging.info(self.visa.query("*IDN?").replace("\n", " ") + "loaded!")
 
     # -- Methods
     def _set_voltage(self, v: float):

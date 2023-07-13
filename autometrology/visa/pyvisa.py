@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 import pyvisa
 
@@ -6,7 +6,7 @@ import pyvisa
 class VISA:
     def __init__(self):
         self.rm: pyvisa.ResourceManager = pyvisa.ResourceManager()
-        self.resource: pyvisa.Resource = None
+        self.resource: Union[pyvisa.Resource, None] = None
 
     def list(self) -> List:
         return list(self.rm.list_resources())
