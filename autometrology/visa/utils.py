@@ -16,6 +16,6 @@ class VISAUtils:
             except VisaIOError:
                 pass
 
-            raise InstrumentNotFoundError(
-                "Scanning completed but no matching instrument found!"
-            )
+        raise InstrumentNotFoundError(
+            "Scanning completed but no matching instrument found!"
+        )
