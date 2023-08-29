@@ -8,6 +8,7 @@ Various scripts for automating UTAT's lab gear
 Currently includes drivers for:
   * Keithley 2380-120-60 Electronic DC Load
   * Korad KA3005P DC Power Supply
+  * Agilent/Keysight 34461A Multimeter
 
 ***Note:*** _drivers do not aim to be feature complete wrappers, but rather only common commands are implemented!_
 
