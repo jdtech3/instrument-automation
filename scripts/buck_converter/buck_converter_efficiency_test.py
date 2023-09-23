@@ -52,8 +52,17 @@ class Result:
 
 
 class Results(object):
-    df: pd.DataFrame = pd.DataFrame()
     raw: list[Result] = []
+
+    def get_efficiency_df(self) -> pd.DataFrame:
+        df = pd.DataFrame(columns=["Vin", "Iout", "Efficiency"])
+
+        i = 0
+        for result in self.raw:
+            df.loc[i] = [result.vin, result.iout, result.get_efficiency()]
+            i += 1
+
+        return df
 
 
 def take_input() -> TestParameters:
@@ -91,12 +100,18 @@ def verify_input(params: TestParameters) -> bool:
 
 def sweep(params: TestParameters, psu: Korad_KA3005P, load: Keithley_2380_120_60, dmm: Keysight_34461A) -> Results:
     logging.warning(f"Starting sweep from {params.min_vin} V to {params.max_vin} V and {params.min_iout} A to {params.max_iout} A!")
+
+    psu.set_voltage(0)
     psu.set_current(psu.max_current)
+    psu.enable()
+
+    load.current_load(0)
     load.remote_sense(True)
+    load.enable()
+
     dmm.dc_voltage_mode()
 
     results = Results()
-
     for vin in np.arange(params.min_vin, params.max_vin + params.vin_increment, params.vin_increment):
         logging.info(f"-- VIN: {vin} V --")
 
@@ -104,6 +119,9 @@ def sweep(params: TestParameters, psu: Korad_KA3005P, load: Keithley_2380_120_60
         time.sleep(params.settling_time)
 
         for iout in np.arange(params.min_iout, params.max_iout + params.iout_increment, params.iout_increment):
+            if iout == 0:
+                iout = 0.1
+
             load.current_load(iout)
             time.sleep(params.settling_time)
 
@@ -121,6 +139,9 @@ def sweep(params: TestParameters, psu: Korad_KA3005P, load: Keithley_2380_120_60
 
             logging.info(f"IN: {measured_vin} V, {measured_iin} A; OUT: {measured_vout} V, {measured_iout} A")
 
+    psu.disable()
+    load.disable()
+
     return results
 
 
@@ -137,6 +158,8 @@ def run():
         params = take_input()
 
     results = sweep(params, psu, load, dmm)
+    df = results.get_efficiency_df()
+    df.to_csv("out.csv")
 
 
 if __name__ == '__main__':
