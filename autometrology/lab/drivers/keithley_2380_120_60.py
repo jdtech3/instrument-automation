@@ -56,6 +56,9 @@ class Keithley_2380_120_60(DCLoad):
     def short_load(self, enable: bool):
         self.visa.write(f"INP:SHOR {1 if enable else 0}")
 
+    def remote_sense(self, enable: bool):
+        self.visa.write(f"SYST:SENS:STAT {1 if enable else 0}")
+
     def enable(self):
         self.visa.write("SOUR:INP ON")
 
